@@ -5,7 +5,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from fluxway.cli import main
+from circadianlight.cli import main
 
 
 class CliTests(unittest.TestCase):

@@ -7,6 +7,7 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
 import tempfile
 from typing import Any, Mapping
 
@@ -81,12 +82,57 @@ class Config:
 
 def default_config_path() -> Path:
     base = os.environ.get("XDG_CONFIG_HOME")
-    return Path(base) / "fluxway/config.json" if base else Path.home() / ".config/fluxway/config.json"
+    return (
+        Path(base) / "circadian-light/config.json"
+        if base
+        else Path.home() / ".config/circadian-light/config.json"
+    )
 
 
 def default_state_path() -> Path:
     base = os.environ.get("XDG_STATE_HOME")
-    return Path(base) / "fluxway/gnome.json" if base else Path.home() / ".local/state/fluxway/gnome.json"
+    return (
+        Path(base) / "circadian-light/gnome.json"
+        if base
+        else Path.home() / ".local/state/circadian-light/gnome.json"
+    )
+
+
+def legacy_config_path() -> Path:
+    base = os.environ.get("XDG_CONFIG_HOME")
+    return (
+        Path(base) / "fluxway/config.json"
+        if base
+        else Path.home() / ".config/fluxway/config.json"
+    )
+
+
+def legacy_state_path() -> Path:
+    base = os.environ.get("XDG_STATE_HOME")
+    return (
+        Path(base) / "fluxway/gnome.json"
+        if base
+        else Path.home() / ".local/state/fluxway/gnome.json"
+    )
+
+
+def migrate_legacy_files() -> list[Path]:
+    """Copy configuration and restore state from the former project name.
+
+    Legacy files are retained so users can safely roll back to an older
+    installation. Existing CircadianLight files always take precedence.
+    """
+
+    migrated: list[Path] = []
+    for old_path, new_path in (
+        (legacy_config_path(), default_config_path()),
+        (legacy_state_path(), default_state_path()),
+    ):
+        if old_path.exists() and not new_path.exists():
+            new_path.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(old_path, new_path)
+            migrated.append(new_path)
+    return migrated
 
 
 def load_config(path: Path) -> Config:
@@ -118,4 +164,3 @@ def save_config(config: Config, path: Path) -> None:
         except FileNotFoundError:
             pass
         raise
-

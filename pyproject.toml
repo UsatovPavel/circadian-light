@@ -3,9 +3,9 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "fluxway"
+name = "circadian-light"
 version = "0.1.0"
-description = "A CLI-configurable f.lux-style color temperature scheduler for Linux"
+description = "A CLI-configurable circadian color temperature scheduler for Linux"
 readme = "README.md"
 requires-python = ">=3.10"
 license = "Apache-2.0"
@@ -22,7 +22,7 @@ classifiers = [
 dependencies = []
 
 [project.scripts]
-fluxway = "fluxway.cli:main"
+"circadian-light" = "circadianlight.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

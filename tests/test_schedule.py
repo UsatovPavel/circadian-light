@@ -1,8 +1,8 @@
 from datetime import datetime
 import unittest
 
-from fluxway.config import Config
-from fluxway.schedule import temperature_at
+from circadianlight.config import Config
+from circadianlight.schedule import temperature_at
 
 
 class ScheduleTests(unittest.TestCase):
@@ -44,4 +44,3 @@ class ScheduleTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

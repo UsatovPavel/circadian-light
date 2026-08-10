@@ -1,0 +1,15 @@
+[Unit]
+Description=CircadianLight color temperature scheduler
+Documentation=https://github.com/UsatovPavel/circadian-light
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/circadian-light run
+ExecStopPost=%h/.local/bin/circadian-light reset
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=graphical-session.target

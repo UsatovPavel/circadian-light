@@ -6,9 +6,9 @@ from datetime import datetime
 import time
 from typing import Callable
 
-from fluxway.backends import Backend
-from fluxway.config import Config
-from fluxway.schedule import ScheduledTemperature, temperature_at
+from circadianlight.backends import Backend
+from circadianlight.config import Config
+from circadianlight.schedule import ScheduledTemperature, temperature_at
 
 
 def apply_once(
@@ -37,4 +37,3 @@ def run_forever(
             backend.apply(scheduled.temperature)
             last_temperature = scheduled.temperature
         sleep(config.interval_seconds)
-

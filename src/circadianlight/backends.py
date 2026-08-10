@@ -138,4 +138,3 @@ def select_backend(
         method = "wayland" if environment.get("WAYLAND_DISPLAY") else "randr"
         return GammastepBackend(method, runner)
     raise BackendError(f"unknown backend: {requested}")
-

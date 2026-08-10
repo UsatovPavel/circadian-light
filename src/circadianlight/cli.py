@@ -1,4 +1,4 @@
-"""Command-line interface for Fluxway."""
+"""Command-line interface for CircadianLight."""
 
 from __future__ import annotations
 
@@ -10,9 +10,9 @@ from pathlib import Path
 import sys
 from typing import Sequence
 
-from fluxway import __version__
-from fluxway.backends import BackendError, select_backend
-from fluxway.config import (
+from circadianlight import __version__
+from circadianlight.backends import BackendError, select_backend
+from circadianlight.config import (
     Config,
     ConfigError,
     MAX_TEMPERATURE,
@@ -22,10 +22,11 @@ from fluxway.config import (
     default_config_path,
     default_state_path,
     load_config,
+    migrate_legacy_files,
     save_config,
 )
-from fluxway.daemon import apply_once, run_forever
-from fluxway.schedule import temperature_at
+from circadianlight.daemon import apply_once, run_forever
+from circadianlight.schedule import temperature_at
 
 
 def temperature(value: str) -> int:
@@ -42,8 +43,8 @@ def temperature(value: str) -> int:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="fluxway",
-        description="f.lux-style color temperature scheduling for Linux",
+        prog="circadian-light",
+        description="circadian color temperature scheduling for Linux",
     )
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     parser.add_argument("--config", type=Path, default=default_config_path())
@@ -133,6 +134,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     arguments = parser.parse_args(argv)
     try:
+        if arguments.config == default_config_path():
+            migrate_legacy_files()
         config = load_config(arguments.config)
 
         if arguments.command == "show":
@@ -162,14 +165,17 @@ def main(argv: Sequence[str] | None = None) -> int:
             print(f"Reset {backend.name} display settings")
             return 0
         if arguments.command == "run":
-            print(f"Fluxway running via {backend.name}; press Ctrl+C to stop", flush=True)
+            print(f"CircadianLight running via {backend.name}; press Ctrl+C to stop", flush=True)
             try:
                 run_forever(config, backend)
             except KeyboardInterrupt:
-                print("\nFluxway stopped; use 'fluxway reset' to restore prior settings")
+                print(
+                    "\nCircadianLight stopped; use 'circadian-light reset' "
+                    "to restore prior settings"
+                )
             return 0
     except (ConfigError, BackendError, OSError) as error:
-        print(f"fluxway: error: {error}", file=sys.stderr)
+        print(f"circadian-light: error: {error}", file=sys.stderr)
         return 1
     return 0
 

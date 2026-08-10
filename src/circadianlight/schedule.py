@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 
-from fluxway.config import Config, Phase
+from circadianlight.config import Config, Phase
 
 
 MINUTES_PER_DAY = 24 * 60
@@ -64,4 +64,3 @@ def temperature_at(config: Config, moment: datetime) -> ScheduledTemperature:
         phase.temperature - previous_phase.temperature
     ) * progress
     return ScheduledTemperature(name, round(interpolated), phase.temperature, progress)
-

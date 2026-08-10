@@ -3,7 +3,7 @@ import subprocess
 import tempfile
 import unittest
 
-from fluxway.backends import GammastepBackend, GnomeBackend
+from circadianlight.backends import GammastepBackend, GnomeBackend
 
 
 class RecordingRunner:
@@ -73,4 +73,3 @@ class BackendTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

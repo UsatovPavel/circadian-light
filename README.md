@@ -1,6 +1,6 @@
-# Fluxway
+# CircadianLight
 
-Fluxway is a small, dependency-free Linux daemon that changes display color
+CircadianLight is a small, dependency-free Linux daemon that changes display color
 temperature throughout the day. It provides three CLI-configurable phases and
 supports both Ubuntu GNOME Wayland and wlroots compositors such as Sway.
 
@@ -12,7 +12,7 @@ Default schedule:
 | Day | 08:00 | 4750 K |
 | Evening | 21:30 | 3650 K |
 
-Temperatures may be set from 1900 K to 6500 K. By default, Fluxway fades to a
+Temperatures may be set from 1900 K to 6500 K. By default, CircadianLight fades to a
 new phase over 30 minutes.
 
 ## Backends
@@ -42,7 +42,7 @@ sudo apt install gammastep
 Run without installing while developing:
 
 ```bash
-PYTHONPATH=src python3 -m fluxway status
+PYTHONPATH=src python3 -m circadianlight status
 ```
 
 ## Use
@@ -50,13 +50,13 @@ PYTHONPATH=src python3 -m fluxway status
 Show the active configuration:
 
 ```bash
-fluxway show
+circadian-light show
 ```
 
 Configure all Jira AGENT-66 parameters from the CLI:
 
 ```bash
-fluxway config \
+circadian-light config \
   --day-start 08:00 --day-temp 4750 \
   --evening-start 21:30 --evening-temp 3650 \
   --night-start 00:00 --night-temp 2500
@@ -65,15 +65,16 @@ fluxway config \
 Additional controls:
 
 ```bash
-fluxway config --transition-minutes 30 --interval-seconds 60
-fluxway config --backend auto       # auto, gnome, or gammastep
-fluxway status
-fluxway once                        # apply now and exit
-fluxway run                         # run continuously
-fluxway reset                       # restore the previous display settings
+circadian-light config --transition-minutes 30 --interval-seconds 60
+circadian-light config --backend auto       # auto, gnome, or gammastep
+circadian-light status
+circadian-light once                        # apply now and exit
+circadian-light run                         # run continuously
+circadian-light reset                       # restore the previous display settings
 ```
 
-Configuration is stored at `${XDG_CONFIG_HOME:-~/.config}/fluxway/config.json`.
+Configuration is stored at
+`${XDG_CONFIG_HOME:-~/.config}/circadian-light/config.json`.
 
 ### Run automatically with systemd
 
@@ -81,16 +82,16 @@ After installing with `pipx`:
 
 ```bash
 mkdir -p ~/.config/systemd/user
-cp systemd/fluxway.service ~/.config/systemd/user/
+cp systemd/circadian-light.service ~/.config/systemd/user/
 systemctl --user daemon-reload
-systemctl --user enable --now fluxway.service
+systemctl --user enable --now circadian-light.service
 ```
 
 Inspect it with:
 
 ```bash
-systemctl --user status fluxway.service
-journalctl --user -u fluxway.service
+systemctl --user status circadian-light.service
+journalctl --user -u circadian-light.service
 ```
 
 ## Sway example
@@ -98,12 +99,33 @@ journalctl --user -u fluxway.service
 Select the Gammastep backend and start the daemon:
 
 ```bash
-fluxway config --backend gammastep
-fluxway run
+circadian-light config --backend gammastep
+circadian-light run
 ```
 
 Sway must advertise the Wayland gamma-control protocol. GNOME does not, which
-is why Fluxway automatically uses its native Night Light API there.
+is why CircadianLight automatically uses its native Night Light API there.
+
+## Upgrade from Fluxway
+
+CircadianLight automatically copies an existing Fluxway configuration and
+GNOME restore state on first launch. The legacy files are retained for safe
+rollback. Replace the old `pipx` installation with:
+
+```bash
+pipx uninstall fluxway
+pipx install .
+```
+
+If the legacy systemd service was enabled, replace it as well:
+
+```bash
+systemctl --user disable --now fluxway.service
+rm ~/.config/systemd/user/fluxway.service
+cp systemd/circadian-light.service ~/.config/systemd/user/
+systemctl --user daemon-reload
+systemctl --user enable --now circadian-light.service
+```
 
 ## Development
 
@@ -116,4 +138,3 @@ PYTHONPATH=src python3 -m unittest discover -s tests -v
 Copyright 2026 UsatovPavel
 
 Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE).
-

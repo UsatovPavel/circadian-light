@@ -1,8 +1,18 @@
 from pathlib import Path
+from unittest.mock import patch
 import tempfile
 import unittest
 
-from fluxway.config import Config, ConfigError, Phase, load_config, save_config
+from circadianlight.config import (
+    Config,
+    ConfigError,
+    Phase,
+    default_config_path,
+    default_state_path,
+    load_config,
+    migrate_legacy_files,
+    save_config,
+)
 
 
 class ConfigTests(unittest.TestCase):
@@ -33,7 +43,29 @@ class ConfigTests(unittest.TestCase):
 
             self.assertEqual(load_config(path), expected)
 
+    def test_migrates_legacy_configuration_and_state_without_deleting_them(self) -> None:
+        with tempfile.TemporaryDirectory() as directory, patch.dict(
+            "os.environ",
+            {
+                "XDG_CONFIG_HOME": f"{directory}/config",
+                "XDG_STATE_HOME": f"{directory}/state",
+            },
+        ):
+            old_config = Path(directory) / "config/fluxway/config.json"
+            old_state = Path(directory) / "state/fluxway/gnome.json"
+            old_config.parent.mkdir(parents=True)
+            old_state.parent.mkdir(parents=True)
+            old_config.write_text('{"legacy": true}\n', encoding="utf-8")
+            old_state.write_text('{"night-light-enabled": false}\n', encoding="utf-8")
+
+            migrated = migrate_legacy_files()
+
+            self.assertEqual(migrated, [default_config_path(), default_state_path()])
+            self.assertEqual(default_config_path().read_text(), old_config.read_text())
+            self.assertEqual(default_state_path().read_text(), old_state.read_text())
+            self.assertTrue(old_config.exists())
+            self.assertTrue(old_state.exists())
+
 
 if __name__ == "__main__":
     unittest.main()
-
