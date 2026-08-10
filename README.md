@@ -135,6 +135,4 @@ PYTHONPATH=src python3 -m unittest discover -s tests -v
 
 ## License
 
-Copyright 2026 UsatovPavel
-
 Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE).
