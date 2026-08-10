@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fluxway"
+version = "0.1.0"
+description = "A CLI-configurable f.lux-style color temperature scheduler for Linux"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{name = "UsatovPavel"}]
+keywords = ["wayland", "night-light", "gammastep", "gnome", "sway"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Topic :: Desktop Environment",
+]
+dependencies = []
+
+[project.scripts]
+fluxway = "fluxway.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

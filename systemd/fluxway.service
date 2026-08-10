@@ -1,0 +1,15 @@
+[Unit]
+Description=Fluxway color temperature scheduler
+Documentation=https://github.com/UsatovPavel/fluxway
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/fluxway run
+ExecStopPost=%h/.local/bin/fluxway reset
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=graphical-session.target
