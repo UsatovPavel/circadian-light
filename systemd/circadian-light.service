@@ -6,8 +6,8 @@ After=graphical-session.target
 
 [Service]
 Type=simple
-ExecStart=%h/.local/bin/circadian-light run
-ExecStopPost=%h/.local/bin/circadian-light reset
+ExecStart=/usr/local/bin/circadian-light run
+ExecStopPost=/usr/local/bin/circadian-light reset
 Restart=on-failure
 RestartSec=5
 

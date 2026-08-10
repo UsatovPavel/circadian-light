@@ -24,13 +24,17 @@ new phase over 30 minutes.
 - **Auto:** selects GNOME when `XDG_CURRENT_DESKTOP` contains `GNOME`, and
   Gammastep otherwise.
 
-## Install
+## System installation
 
-Python 3.10 or newer is required. For an isolated user installation:
+Python 3.10 or newer is required. A manual system installation follows the
+Filesystem Hierarchy Standard: application files live under `/opt`, while the
+command is exposed through `/usr/local/bin`.
 
 ```bash
-sudo apt install pipx
-pipx install .
+sudo mv circadian-light /opt/circadian-light
+python3 -m venv --system-site-packages /opt/circadian-light/.venv
+/opt/circadian-light/.venv/bin/python -m pip install --no-build-isolation /opt/circadian-light
+sudo ln -s /opt/circadian-light/.venv/bin/circadian-light /usr/local/bin/circadian-light
 ```
 
 For the Sway backend, install Gammastep as well:
@@ -78,11 +82,11 @@ Configuration is stored at
 
 ### Run automatically with systemd
 
-After installing with `pipx`:
+After the system installation:
 
 ```bash
-mkdir -p ~/.config/systemd/user
-cp systemd/circadian-light.service ~/.config/systemd/user/
+sudo install -m 0644 /opt/circadian-light/systemd/circadian-light.service \
+  /etc/systemd/user/circadian-light.service
 systemctl --user daemon-reload
 systemctl --user enable --now circadian-light.service
 ```
@@ -110,11 +114,10 @@ is why CircadianLight automatically uses its native Night Light API there.
 
 CircadianLight automatically copies an existing Fluxway configuration and
 GNOME restore state on first launch. The legacy files are retained for safe
-rollback. Replace the old `pipx` installation with:
+rollback. Remove the old `pipx` installation after installing CircadianLight:
 
 ```bash
 pipx uninstall fluxway
-pipx install .
 ```
 
 If the legacy systemd service was enabled, replace it as well:
