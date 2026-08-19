@@ -57,8 +57,8 @@ Configure all Jira AGENT-66 parameters from the CLI:
 
 ```bash
 circadian-light config \
-  --day-start 08:00 --day-temp 4750 \
-  --evening-start 21:30 --evening-temp 3650 \
+  --day-start 08:00 --day-temp 4000 \
+  --evening-start 21:30 --evening-temp 3300 \
   --night-start 00:00 --night-temp 2500
 ```
 
